@@ -2,6 +2,10 @@ import src.Manager as Ma
 import multiprocessing as mp
 import time
 
+"""
+This demonstrates that you can directly use the Manager for single tasks that are intensive with very little code
+"""
+
 
 def is_prime(n):
     for number in range(2, n):
@@ -23,7 +27,7 @@ if __name__ == "__main__":
     manager = Ma.WorkerManager(
         task=is_prime,
         data=[i for i in range(100000)],
-        desired_num_workers=10,
+        desired_num_workers=8,
         requirements=None,
     )
     manager.generate_worker(8)
