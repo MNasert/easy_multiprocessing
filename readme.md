@@ -19,6 +19,9 @@ each other, note that this isn't the keypoint of this implementation:
 | time - big factorials n = 50_000    | <span style="color:red">**90.6s**  </span>  | 102.4s                         | 110.7s                                     | 576.64s       |
 | relative speed of fastest test      | <span style="color:red">**100%**   </span>  | 92,5%                          | 81,8%                                      | 15,76%        |
 |                                     |                                             |                                |                                            |               |
+|                                     |                                             |                                |                                            |               |
+|                                     |                                             |                                |                                            |               |
+|                                     |                                             |                                |                                            |               |
 
 All times have been measured on an i5-12600k with 32GB of Memory and the managers and pool got 8 processes.
 The concept of this implementation is not to split the whole dataset and let each process work, but to send data just-in-time
