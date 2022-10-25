@@ -17,13 +17,13 @@ class WorkerInstance:
         self.connection_manager = connection_manager
         self.id = worker_id
 
-        self.__process__ = mp.Process(target=self.__start__, args=(self.method,
-                                                                   connection_worker))
+        self.__process = mp.Process(target=self.worker_start, args=(self.method,
+                                                                    connection_worker))
         self.is_alive = False
         self.needs_work = True
 
     @staticmethod
-    def __start__(method, connection_worker):
+    def worker_start(method, connection_worker):
         while True:
             data = connection_worker.recv()
 
@@ -32,17 +32,17 @@ class WorkerInstance:
             result = method(data)
             connection_worker.send((data, result))
 
-    def __kill__(self):
+    def __kill(self):
         self.connection_manager.send(Signals.__ExitSignal__)
-        self.__process__.terminate()
+        self.__process.terminate()
 
     def start(self):
         self.is_alive = True
-        self.__process__.start()
+        self.__process.start()
 
     def kill(self):
         self.is_alive = False
-        self.__kill__()
+        self.__kill()
 
     def get(self):
         return self.connection_manager.recv()

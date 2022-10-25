@@ -1,10 +1,10 @@
+import psutil
 from typing import List, Tuple
-from Manager import WorkerManager
+from src.Manager import WorkerManager
+import src.tools.Signals as Signals
 
 
 class ProcessHandler:
-    # constants
-
     def __init__(self,
                  managers: List[WorkerManager],
                  maxram: float = -1,
@@ -12,6 +12,7 @@ class ProcessHandler:
         self.managers = managers
         self.maxram = maxram
         self.logging = logging
+        self.__fullfilled_tasks = []
 
     def start(self):
         raise NotImplementedError

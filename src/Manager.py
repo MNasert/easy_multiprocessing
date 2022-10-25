@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from typing import List
+from typing import List, Union, KeysView
 import multiprocessing as mp
 
 from src.Worker import WorkerInstance
@@ -12,8 +12,8 @@ class WorkerManager:
                  data: dict or list,  # last layer _must_ be list
                  desired_num_workers: int,
                  requirements: List[Callable] = None,  # what methods must be done already (if necessary)
-                 data_keys: list = None,  # Only needed if data is dict
-                 poll_timeout: float = .1  # timeout for polling each worker; in ms
+                 data_keys: Union[KeysView, List] = None,  # Only needed if data is dict
+                 poll_timeout: float = .01  # timeout for polling each worker; in ms
                  ):
 
         self.task = task
@@ -23,31 +23,21 @@ class WorkerManager:
         self.requirements = requirements
         self.data_keys = data_keys
 
-        self.__workers__: List[WorkerInstance] = []  # typehint for IDE and reader
-        self.__iterator__ = self.data_iterator()
-        self.__poll_timeout__ = poll_timeout * (1/1000)
-        self.__index_memory__ = {}
-        self.__active_workers__ = 0
+        self.__workers: List[WorkerInstance] = []  # typehint for IDE and reader
+        self.__iterator = self.data_iterator()
+        self.__poll_timeout = poll_timeout * (1 / 1000)
+        self.__active_workers = 0
         self.results = {}
 
     def data_iterator(self):
-        counter = -1
         if self.data_keys:
-            endlevel = self.data
             for key in self.data_keys:
-                endlevel = endlevel[key]
-            while counter < len(endlevel) - 1:
-                res = self.data
-                counter += 1
-                for layer in self.data_keys:
-                    res = res[layer]
-                yield res[counter]
+                yield self.data[key]
             while True:
                 yield Signals.__ExitSignal__
         else:
-            while counter < len(self.data) - 1:
-                counter += 1
-                yield self.data[counter]
+            for data_point in self.data:
+                yield data_point
             while True:
                 yield Signals.__ExitSignal__
 
@@ -55,9 +45,8 @@ class WorkerManager:
         for worker in range(num_processes):
 
             connection_worker, connection_manager = mp.Pipe()
-            self.__index_memory__[worker] = 0 + len(self.__workers__)
-            self.__active_workers__ += 1
-            self.__workers__.append(
+            self.__active_workers += 1
+            self.__workers.append(
 
                 WorkerInstance(
                     method=self.task,
@@ -68,13 +57,13 @@ class WorkerManager:
             )
 
     def start(self) -> object:
-        for worker in self.__workers__:
+        for worker in self.__workers:
             worker.start()
 
         working = True
         while working:
             working = False
-            for worker in self.__workers__:
+            for worker in self.__workers:
                 if worker.is_alive:
                     self.check_worker(worker)
                     working = True
@@ -82,15 +71,15 @@ class WorkerManager:
         return self.results
 
     def check_worker(self, worker: WorkerInstance) -> None:
-        if worker.poll(self.__poll_timeout__):
+        if worker.poll(self.__poll_timeout):
             key, result = worker.get()
             self.results[key] = result
-            data = next(self.__iterator__)
+            data = next(self.__iterator)
             worker.set(data)
             if data == Signals.__ExitSignal__:
                 worker.kill()
 
         if worker.needs_work:
-            data = next(self.__iterator__)
+            data = next(self.__iterator)
             worker.set(data)
 

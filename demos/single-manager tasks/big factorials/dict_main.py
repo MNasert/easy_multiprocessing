@@ -1,34 +1,32 @@
 import src.Manager as Ma
 import multiprocessing as mp
 import time
+import math
 
 """
 This demonstrates that you can directly use the Manager for single tasks that are intensive with very little code
 """
 
 
-def is_prime(n):
-    for number in range(2, n):
-        if (n % number) == 0:
-            return False
-    return True
+def get_factorial(n):
+    return math.factorial(n)
 
 
 if __name__ == "__main__":
-    res = []
-    start = time.time()
-    for i in range(100000):
-        res.append(is_prime(i))
-    print("Single process:", time.time() - start)
-
     mp.freeze_support()
+
+    data_dict = {}
+
+    for i in range(50_000):
+        data_dict[str(i)] = i
 
     start = time.time()
     manager = Ma.WorkerManager(
-        task=is_prime,
-        data=[i for i in range(100000)],
+        task=get_factorial,
+        data=data_dict,
         desired_num_workers=8,
         requirements=None,
+        data_keys=data_dict.keys()
     )
     manager.generate_worker(8)
     manager.start()
