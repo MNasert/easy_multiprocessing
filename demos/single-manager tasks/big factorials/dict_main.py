@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     data_dict = {}
 
-    for i in range(50_000):
+    for i in range(20_000):
         data_dict[str(i)] = i
 
     start = time.time()
@@ -28,6 +28,6 @@ if __name__ == "__main__":
         requirements=None,
         data_keys=data_dict.keys()
     )
-    manager.generate_worker(8)
-    manager.start()
+    manager.generate_workers(8)
+    manager.start_single()
     print("8 processes:", time.time() - start)

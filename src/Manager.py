@@ -13,20 +13,21 @@ class WorkerManager:
                  desired_num_workers: int,
                  requirements: List[Callable] = None,  # what methods must be done already (if necessary)
                  data_keys: Union[KeysView, List] = None,  # Only needed if data is dict
-                 poll_timeout: float = .01  # timeout for polling each worker; in ms
-                 ):
+                 poll_timeout: float = .01,  # timeout for polling each worker; in ms
+                 logging: bool = False):
 
         self.task = task
         self.data = data
 
         self.desired_num_workers = desired_num_workers
-        self.requirements = requirements
+        self.requirements = [hash(requirement) for requirement in requirements] if requirements else []
         self.data_keys = data_keys
 
         self.__workers: List[WorkerInstance] = []  # typehint for IDE and reader
         self.__iterator = self.data_iterator()
         self.__poll_timeout = poll_timeout * (1 / 1000)
         self.__active_workers = 0
+        self.logging = logging
         self.results = {}
 
     def data_iterator(self):
@@ -41,7 +42,7 @@ class WorkerManager:
             while True:
                 yield Signals.__ExitSignal__
 
-    def generate_worker(self, num_processes: int) -> None:
+    def generate_workers(self, num_processes: int) -> None:
         for worker in range(num_processes):
 
             connection_worker, connection_manager = mp.Pipe()
@@ -56,21 +57,22 @@ class WorkerManager:
                 )
             )
 
-    def start(self) -> object:
+        if self.logging:
+            print(str(self) + ": started", len(self.__workers), "processes")
+
+    def start(self) -> None:
+        for worker in self.__workers:
+            worker.start()
+
+    def start_single(self):
         for worker in self.__workers:
             worker.start()
 
         working = True
         while working:
-            working = False
-            for worker in self.__workers:
-                if worker.is_alive:
-                    self.check_worker(worker)
-                    working = True
+            working = self.check_workers()
 
-        return self.results
-
-    def check_worker(self, worker: WorkerInstance) -> None:
+    def check_worker(self, worker: WorkerInstance) -> bool:
         if worker.poll(self.__poll_timeout):
             key, result = worker.get()
             self.results[key] = result
@@ -83,3 +85,18 @@ class WorkerManager:
             data = next(self.__iterator)
             worker.set(data)
 
+        return worker.is_alive
+
+    def check_workers(self) -> bool:
+        working = False
+        for worker in self.__workers:
+            self.check_worker(worker)
+            if worker.is_alive:
+                working = True
+        return working
+
+    def __hash__(self):
+        return sum(self.requirements) + hash(self.task)
+
+    def __str__(self):
+        return self.task.__qualname__ + " Manager"

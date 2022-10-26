@@ -19,6 +19,6 @@ if __name__ == "__main__":
 
     start = time.time()
     with multiprocessing.Pool(processes=8) as pool:
-        _ = pool.map(is_prime, [i for i in range(200_000)])
+        _ = pool.map(is_prime, [i for i in range(500_000)])
 
     print("8 processes:", time.time() - start)

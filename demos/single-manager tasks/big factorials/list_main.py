@@ -17,10 +17,10 @@ if __name__ == "__main__":
     start = time.time()
     manager = Ma.WorkerManager(
         task=get_factorial,
-        data=[i for i in range(50_000)],
+        data=[i for i in range(20_000)],
         desired_num_workers=8,
         requirements=None,
     )
-    manager.generate_worker(8)
-    manager.start()
+    manager.generate_workers(8)
+    manager.start_single()
     print("8 processes:", time.time() - start)

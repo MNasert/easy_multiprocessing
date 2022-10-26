@@ -23,6 +23,6 @@ if __name__ == "__main__":
         desired_num_workers=8,
         requirements=None,
     )
-    manager.generate_worker(8)
-    manager.start()
+    manager.generate_workers(8)
+    manager.start_single()
     print("8 processes:", time.time() - start)

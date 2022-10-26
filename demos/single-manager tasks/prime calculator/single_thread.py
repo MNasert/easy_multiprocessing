@@ -11,6 +11,6 @@ def is_prime(n):
 if __name__ == "__main__":
     res = []
     start = time.time()
-    for i in range(200_000):
+    for i in range(500_000):
         res.append(is_prime(i))
     print("Single process:", time.time() - start)

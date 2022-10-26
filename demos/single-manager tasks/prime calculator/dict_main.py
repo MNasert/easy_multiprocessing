@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     data_dict = {}
 
-    for i in range(200_000):
+    for i in range(500_000):
         data_dict[str(i)] = i
 
     start = time.time()
@@ -30,6 +30,6 @@ if __name__ == "__main__":
         requirements=None,
         data_keys=data_dict.keys()  # choose your target layer and then go!
     )
-    manager.generate_worker(8)
-    manager.start()
+    manager.generate_workers(8)
+    manager.start_single()
     print("8 processes:", time.time() - start)
