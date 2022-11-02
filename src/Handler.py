@@ -21,7 +21,7 @@ class ProcessHandler:
         self.__results = {}
         self.__fullfilled_tasks = []
 
-    def start(self) -> dict:
+    def start(self) -> dict:  # TODO: async
         done = False
         while not done:
             self.__managerlist = []
@@ -55,12 +55,12 @@ class ProcessHandler:
                 working = True
         return working
 
-    def order_managers(self):
+    def order_managers(self) -> None:
         self.__scheduled_managers = []
         self.__sum_desired_procs = 0
         for manager in self.managers:
             if self.logging:
-                manager.logging = self.logging
+                manager.__logging = self.logging
             if self.__fullfilled_tasks == manager.requirements and hash(manager) not in self.__fullfilled_tasks:
                 self.__scheduled_managers.append(manager)
 

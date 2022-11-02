@@ -21,14 +21,16 @@ class WorkerManager:
 
         self.desired_num_workers = desired_num_workers
         self.requirements = [hash(requirement) for requirement in requirements] if requirements else []
-        self.data_keys = data_keys
+        self.data_keys = data_keys  # FIXME: if I want to put output of previous manager as input?
+                                    # -> fixed -> KeysView gets updated with dict update -> include in demo
+
+        self.logging = logging
+        self.results = {}
 
         self.__workers: List[WorkerInstance] = []  # typehint for IDE and reader
         self.__iterator = self.data_iterator()
         self.__poll_timeout = poll_timeout * (1 / 1000)
         self.__active_workers = 0
-        self.logging = logging
-        self.results = {}
 
     def data_iterator(self):
         if self.data_keys:
@@ -64,7 +66,7 @@ class WorkerManager:
         for worker in self.__workers:
             worker.start()
 
-    def start_single(self):
+    def start_single(self) -> None:
         for worker in self.__workers:
             worker.start()
 
@@ -95,8 +97,8 @@ class WorkerManager:
                 working = True
         return working
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return sum(self.requirements) + hash(self.task)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.task.__qualname__ + " Manager"

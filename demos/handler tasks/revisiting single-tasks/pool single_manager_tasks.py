@@ -23,8 +23,8 @@ if __name__ == "__main__":
 
     start = time.time()
     with mp.Pool(processes=8) as p:
-        _ = p.map(is_prime, data)
+        p.map(is_prime, data)
 
     with mp.Pool(processes=8) as p:
-        _2 = p.map(get_factorial, data)
+        p.map(get_factorial, data)
     print(time.time() - start, "s")

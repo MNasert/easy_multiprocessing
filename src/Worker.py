@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from typing import Tuple
 import multiprocessing as mp
 import src.tools.Signals as Signals
 import multiprocessing.connection as connection
@@ -23,7 +24,7 @@ class WorkerInstance:
         self.needs_work = True
 
     @staticmethod
-    def worker_start(method, connection_worker):
+    def worker_start(method, connection_worker) -> None:
         while True:
             data = connection_worker.recv()
 
@@ -32,22 +33,22 @@ class WorkerInstance:
             result = method(data)
             connection_worker.send((data, result))
 
-    def __kill(self):
+    def __kill(self) -> None:
         self.connection_manager.send(Signals.__ExitSignal__)
         self.__process.terminate()
 
-    def start(self):
+    def start(self) -> None:
         self.is_alive = True
         self.__process.start()
 
-    def kill(self):
+    def kill(self) -> None:
         self.is_alive = False
         self.__kill()
 
-    def get(self):
+    def get(self) -> Tuple:
         return self.connection_manager.recv()
 
-    def set(self, data):
+    def set(self, data) -> None:
         self.connection_manager.send(data)
         self.needs_work = False
 

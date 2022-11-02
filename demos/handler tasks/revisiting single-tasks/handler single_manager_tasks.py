@@ -38,6 +38,7 @@ if __name__ == "__main__":
     )
 
     start = time.time()
-    Handler = Ha.ProcessHandler([Manager_fac, Manager_prime], limit_processes=8)
+    Handler = Ha.ProcessHandler([Manager_fac, Manager_prime],
+                                limit_processes=8)
     results = Handler.start()
     print(time.time() - start, "s")
