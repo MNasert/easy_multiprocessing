@@ -16,25 +16,26 @@ class WorkerInstance:
         self.method = method
         self.connection_worker = connection_worker
         self.connection_manager = connection_manager
-        self.id = worker_id
-
-        self.__process = mp.Process(target=self.worker_start, args=(self.method,
-                                                                    connection_worker))
         self.is_alive = False
         self.needs_work = True
+        self.id = worker_id
+
+        self.__process = mp.Process(target=self.__start__, args=(self.method,
+                                                                 connection_worker))
+
 
     @staticmethod
-    def worker_start(method, connection_worker) -> None:
+    def __start__(method: Callable, connection_worker: connection) -> None:
         while True:
             data = connection_worker.recv()
 
-            if data == Signals.__ExitSignal__:
+            if data == Signals.EXIT_SIGNAL:
                 connection_worker.close()
             result = method(data)
             connection_worker.send((data, result))
 
     def __kill(self) -> None:
-        self.connection_manager.send(Signals.__ExitSignal__)
+        self.connection_manager.send(Signals.EXIT_SIGNAL)
         self.__process.terminate()
 
     def start(self) -> None:
@@ -48,11 +49,11 @@ class WorkerInstance:
     def get(self) -> Tuple:
         return self.connection_manager.recv()
 
-    def set(self, data) -> None:
+    def set(self, data: object) -> None:
         self.connection_manager.send(data)
         self.needs_work = False
 
-    def poll(self, timeout) -> bool:
+    def poll(self, timeout: float) -> bool:
         if self.connection_manager.poll(timeout):
             self.needs_work = True
             return True

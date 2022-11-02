@@ -1,5 +1,3 @@
-# yet another hashdict because of not being able to PRACTICALLY and SHORTLY disable random hashing
-
-__ExitSignal__ = hash("Exit")
-__HaltSignal__ = hash("Halt")
-__PrioritySignal__ = hash("Priority")
+EXIT_SIGNAL = hash("Exit")
+HALT_SIGNAL = hash("Halt")
+PRIORITY_SIGNAL = hash("Priority")

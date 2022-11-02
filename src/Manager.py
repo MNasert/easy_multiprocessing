@@ -28,21 +28,21 @@ class WorkerManager:
         self.results = {}
 
         self.__workers: List[WorkerInstance] = []  # typehint for IDE and reader
-        self.__iterator = self.data_iterator()
+        self.__iterator = self.generator()
         self.__poll_timeout = poll_timeout * (1 / 1000)
         self.__active_workers = 0
 
-    def data_iterator(self):
+    def generator(self):
         if self.data_keys:
             for key in self.data_keys:
                 yield self.data[key]
             while True:
-                yield Signals.__ExitSignal__
+                yield Signals.EXIT_SIGNAL
         else:
             for data_point in self.data:
                 yield data_point
             while True:
-                yield Signals.__ExitSignal__
+                yield Signals.EXIT_SIGNAL
 
     def generate_workers(self, num_processes: int) -> None:
         for worker in range(num_processes):
@@ -80,7 +80,7 @@ class WorkerManager:
             self.results[key] = result
             data = next(self.__iterator)
             worker.set(data)
-            if data == Signals.__ExitSignal__:
+            if data == Signals.EXIT_SIGNAL:
                 worker.kill()
 
         if worker.needs_work:
