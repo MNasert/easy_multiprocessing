@@ -20,12 +20,12 @@ each other, note that this isn't the keypoint of this implementation:
 | time of big factorials n = 20_000, 50_000     | <span style="color:red"> **7.4s** </span>, <span style="color:red"> **90.6s** </span> | 7.7s, 102.4s                     | 9.6s, 110.7s                                      | 44.8s, 576.64s    |
 | relative speed of fastest test                | <span style="color:red">**100%** </span>, <span style="color:red">**100%**  </span>   | 96.4%, 92.5%                     | 77.4%, 81.8%                                      | 16.5%, 15.76%     |
 
-| Description                          | `easy_multiprocessing`: `Handler`            | `multiprocessing.Pool().map()` - iteratively |
-|:-------------------------------------|:---------------------------------------------|:---------------------------------------------|
-| is_prime + get_factorial, n = 50_000 | <span style="color:red"> **93.239s** </span> | 112.735s                                     |
-| relative speed of fastest test       | <span style="color:red"> **100%** </span>    | 82.6%                                        |
-|                                      |                                              |                                              |
-|                                      |                                              |                                              |
+| Description                          | `easy_multiprocessing`: `Handler`         | `multiprocessing.Pool().map()` - iteratively |
+|:-------------------------------------|:------------------------------------------|:---------------------------------------------|
+| is_prime + get_factorial, n = 50_000 | ==**93.239s**==                           | 112.735s                                     |
+| relative speed of fastest test       | <span style="color:red"> **100%** </span> | 82.6%                                        |
+|                                      |                                           |                                              |
+|                                      |                                           |                                              |
 
 All times have been measured on an i5-12600k with 32GB of Memory and the `Manager`'s and `pool` got each 8 processes. </br>
 The concept of this implementation is not to split the whole dataset and let each process work, but to send data just-in-time
