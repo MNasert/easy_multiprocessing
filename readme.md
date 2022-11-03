@@ -22,7 +22,7 @@ each other, note that this isn't the keypoint of this implementation:
 
 | Description                          | `easy_multiprocessing`: `Handler`         | `multiprocessing.Pool().map()` - iteratively |
 |:-------------------------------------|:------------------------------------------|:---------------------------------------------|
-| is_prime + get_factorial, n = 50_000 | ==**93.239s**==                           | 112.735s                                     |
+| is_prime + get_factorial, n = 50_000 | **==93.239s==**                           | 112.735s                                     |
 | relative speed of fastest test       | <span style="color:red"> **100%** </span> | 82.6%                                        |
 |                                      |                                           |                                              |
 |                                      |                                           |                                              |
