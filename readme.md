@@ -5,7 +5,7 @@ Framework to make handling multiple intertwined large tasks easier.
 ### img headline
 img description
 TODO: make UML diagram
-![alt text](imgs/Concept_unfinished.png)
+![alt text](imgs/UML_Diag1.png)
 
 ### Performance
 
