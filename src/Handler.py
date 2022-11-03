@@ -25,7 +25,7 @@ class ProcessHandler:
         done = False
         while not done:
             self.__managerlist = []
-            self.order_managers()
+            self.__order_managers()
             for manager in self.__scheduled_managers:
                 manager.generate_workers(max(int(manager.desired_num_workers*(manager.desired_num_workers/self.__sum_desired_procs)), self.__max_processes))
                 manager.start()
@@ -35,7 +35,7 @@ class ProcessHandler:
 
             working = True
             while working:
-                working = self.watch_managers()
+                working = self.__watch_managers()
 
             for manager in self.__managerlist:
                 self.__fullfilled_tasks.append(hash(manager))
@@ -48,14 +48,14 @@ class ProcessHandler:
 
         return self.__results
 
-    def watch_managers(self) -> bool:
+    def __watch_managers(self) -> bool:
         working = False
         for manager in self.__managerlist:
             if manager.check_workers():
                 working = True
         return working
 
-    def order_managers(self) -> None:
+    def __order_managers(self) -> None:
         self.__scheduled_managers = []
         self.__sum_desired_procs = 0
         for manager in self.managers:

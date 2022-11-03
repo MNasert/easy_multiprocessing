@@ -16,9 +16,9 @@ class WorkerInstance:
         self.method = method
         self.connection_worker = connection_worker
         self.connection_manager = connection_manager
+        self.id = worker_id
         self.is_alive = False
         self.needs_work = True
-        self.id = worker_id
 
         self.__process = mp.Process(target=self.__start__, args=(self.method,
                                                                  connection_worker))

@@ -1,3 +1,4 @@
+from _typeshed import SupportsNext
 from collections.abc import Callable
 from typing import List, Union, KeysView
 import multiprocessing as mp
@@ -28,11 +29,11 @@ class WorkerManager:
         self.results = {}
 
         self.__workers: List[WorkerInstance] = []  # typehint for IDE and reader
-        self.__iterator = self.generator()
+        self.__iterator = self.__generator()
         self.__poll_timeout = poll_timeout * (1 / 1000)
         self.__active_workers = 0
 
-    def generator(self):
+    def __generator(self) -> SupportsNext:
         if self.data_keys:
             for key in self.data_keys:
                 yield self.data[key]
@@ -74,7 +75,7 @@ class WorkerManager:
         while working:
             working = self.check_workers()
 
-    def check_worker(self, worker: WorkerInstance) -> bool:
+    def __check_worker(self, worker: WorkerInstance) -> bool:
         if worker.poll(self.__poll_timeout):
             key, result = worker.get()
             self.results[key] = result
@@ -92,7 +93,7 @@ class WorkerManager:
     def check_workers(self) -> bool:
         working = False
         for worker in self.__workers:
-            self.check_worker(worker)
+            self.__check_worker(worker)
             if worker.is_alive:
                 working = True
         return working
