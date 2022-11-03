@@ -4,7 +4,7 @@ Framework to make handling multiple intertwined large tasks easier.
 
 ### img headline
 img description
-TODO: make UML diagram
+TODO: make UML diagram (copyright for diagram: http://dia-installer.de/ under GNU license)
 ![alt text](imgs/UML_Diag1.png)
 
 ### Performance
